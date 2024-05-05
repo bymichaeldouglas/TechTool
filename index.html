@@ -27,7 +27,140 @@
     <button type="button" class="btn-menu"><span>Menu</span></button>
     <a class="home-button" href="/register.html">Giddy Up!</a>
   </header>
-
+  
+    <table id="jq-table">
+      <thead>
+        <tr>
+          <th>Tool</th>
+          <th>Thing</th>
+          <th>Classifier</th>
+          <th>VS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" value="Detector 1" /></td>
+          <td><input type="text" value="Part" /></td>
+          <td><input type="checkbox" value="Classifier" /></td>
+          <td><input type="checkbox" /></td>
+          
+        </tr>
+        <tr>
+          <td><input type="text" value="Detector 1" /></td>
+          <td><input type="text" value="Part" /></td>
+          <td><input type="checkbox" value="Classifier" /></td>
+          <td><input type="checkbox" /></td>
+          
+        </tr>
+        <tr>
+          <td colspan="1">Pass</td>
+          <td></td>
+          <td></td>
+          <td><input type="checkbox" /></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <button id="add-column-button">+ Add Column</button>
+    <button id="add-row-button">Add Row</button>
+    <button id="generate-button">Generate Statements</button>
+    <h1></h1>
+    <textarea id="statement-text-area"></textarea>
+  
+    <script>
+      // Add event listeners for buttons
+      document.getElementById("add-column-button").addEventListener("click", addColumn);
+      document.getElementById("add-row-button").addEventListener("click", addRow);
+      document.getElementById("generate-button").addEventListener("click", generateStatements);
+  
+      function addColumn() {
+        var table = document.getElementById("jq-table");
+        var columnCount = table.rows[0].cells.length;
+        table.rows[0].insertCell(columnCount - 1);
+        table.rows[0].cells[columnCount - 1].innerHTML = `VS`;
+        for (var i = 1; i < table.rows.length; i++) {
+          table.rows[i].insertCell(columnCount);
+          table.rows[i].cells[columnCount].innerHTML = `<input type="checkbox" />`;
+        }
+      }
+  
+      // Function to add a new row
+      function addRow() {
+        var table = document.getElementById("jq-table");
+        var rowCount = table.rows.length;
+        table.insertRow(rowCount - 1);
+        table.rows[rowCount - 1].insertCell(0);
+        table.rows[rowCount - 1].cells[0].innerHTML = `<input type="text" value="Detector 1" />`;
+        table.rows[rowCount - 1].insertCell(1);
+        table.rows[rowCount - 1].cells[1].innerHTML = `<input type="text" value="Part" />`;
+        for (var j = 2; j < table.rows[0].cells.length; j++) {
+          table.rows[rowCount - 1].insertCell(j);
+          table.rows[rowCount - 1].cells[j].innerHTML = `<input type="checkbox" />`;
+        }
+      }
+  
+      // Function to generate statements
+      function generateStatements() {
+    var table = document.getElementById("jq-table");
+    var rows = table.rows;
+    var statements = [];
+  
+    // Iterate over rows (excluding the header row)
+    for (var i = 1; i < rows.length - 1; i++) {
+      var row = rows[i];
+      var toolValue = row.cells[0].children[0].value;
+      var thingValue = row.cells[1].children[0].value;
+      var classifierValue = row.cells[2].children[0].checked? row.cells[2].children[0].value : "";
+      var checkboxStates = [];
+  
+      // Iterate over checkboxes in the row
+      for (var j = 3; j < row.cells.length; j++) {
+        var checkbox = row.cells[j].children[0];
+        if (checkbox.checked) {
+          checkboxStates.push(`([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0),\n\n`);
+        }
+      }
+  
+      // Construct the statement for this row
+      if (checkboxStates.length > 0) {
+        statements.push("(" + checkboxStates.join(" and ") + ")");
+      }
+    }
+  
+  // Iterate over the last row (Pass row)
+  var passRow = rows[rows.length - 1];
+  var passStatements = [];
+  
+  for (var j = 3; j < passRow.cells.length; j++) {
+    var checkbox = passRow.cells[j].children[0];
+    if (checkbox.checked) {
+      var columnStatements = [];
+      for (var i = 1; i < rows.length - 1; i++) {
+        var row = rows[i];
+        var toolValue = row.cells[0].children[0].value;
+        var thingValue = row.cells[1].children[0].value;
+        var classifierValue = row.cells[2].children[0].checked? row.cells[2].children[0].value : "";
+        var checkbox = row.cells[j].children[0];
+        if (checkbox.checked) {
+          columnStatements.push(`([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0) )] | any),\n`);
+        }
+      }
+      passStatements.push("(" + columnStatements.join(" and ") + ")");
+    }
+  }
+  
+    // Construct the final output
+    var output = "{\n";
+    output += `"visible": ${statements.join(" or ")},\n`;
+    output += `"pass": ${passStatements.join(" or ")}\n`;
+    output += "}";
+  
+    var statementTextArea = document.getElementById("statement-text-area");
+    statementTextArea.value = output;
+  }
+    </script>
+  </body>
+  </html>
   <section class="home-about">
     <div class="row column large-9 xlarge-6 xxlarge-4">
       <h2 class="section-title">How Does This Work?</h2>
