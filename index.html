@@ -10,62 +10,150 @@
   <link rel="stylesheet" href="css/main.css">
 
   <script src="js/vendor/modernizr.js"></script>
-</head>
-<body class="page-home">
-
-  <header>
-    <h1 class="title">jq page</h1>
-    <nav class="site-nav">
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="unicorns.html">Meet the Unicorns</a></li>
-        <li><a href="investors.html">Investors &amp; Board of Directors</a></li>
-        <li><a href="faq.html">FAQ</a></li>
-        <li><a href="apply.html">Apply</a></li>
-      </ul>
-    </nav>
-    <button type="button" class="btn-menu"><span>Menu</span></button>
-    <a class="home-button" href="/register.html">Giddy Up!</a>
-  </header>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+      th, td {
+        border: 1px solid #1b1b1b;
+        padding: 8px;
+        text-align: left;
+      }
+    </style>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script>
+        if('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/jq_offline/service_worker.js', { scope: '/jq_offline' })
+            .then(function(registration) {
+                  console.log('Service Worker Registered');
+            })
+            .catch(e => {
+              console.log('Unable to register service worker', e);
+            });
   
-    <table id="jq-table">
-      <thead>
-        <tr>
-          <th>Tool</th>
-          <th>Thing</th>
-          <th>Classifier</th>
-          <th>VS</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="text" value="Detector 1" /></td>
-          <td><input type="text" value="Part" /></td>
-          <td><input type="checkbox" value="Classifier" /></td>
-          <td><input type="checkbox" /></td>
-          
-        </tr>
-        <tr>
-          <td><input type="text" value="Detector 1" /></td>
-          <td><input type="text" value="Part" /></td>
-          <td><input type="checkbox" value="Classifier" /></td>
-          <td><input type="checkbox" /></td>
-          
-        </tr>
-        <tr>
-          <td colspan="1">Pass</td>
-          <td></td>
-          <td></td>
-          <td><input type="checkbox" /></td>
-          
-        </tr>
-      </tbody>
-    </table>
-    <button id="add-column-button">+ Add Column</button>
-    <button id="add-row-button">Add Row</button>
-    <button id="generate-button">Generate Statements</button>
-    <h1></h1>
-    <textarea id="statement-text-area"></textarea>
+          navigator.serviceWorker.ready.then(function(registration) {
+             console.log('Service Worker Ready');
+          })
+          .catch(e => {
+            console.log('Service worker unable to get ready', e);
+          });
+        }
+      </script>
+      <link rel="stylesheet" href="style.css">
+      <script src="https://biowasm.com/cdn/v3/aioli.js"></script>
+      <script defer type="module">
+        async function setup() {
+          // Populate the form from the url parameters
+          let params = (new URL(document.location)).searchParams;
+  
+          let query = params.get('query');
+          if (query) {
+            document.getElementById("filter").value = query;
+          }
+          ['compact-output', 'sort-keys', 'raw-input', 'raw-output', 'slurp'].forEach(option => {
+            let p = params.get(option);
+            if (p === 'true') {
+              document.getElementById(option).checked = true;
+            }
+          });
+        }
+  
+        async function jq() {
+          let data = document.getElementById("input-json").value;
+          let query = document.getElementById("filter").value;
+  
+          let params = (new URL(document.location)).searchParams;
+          let options = ["--monochrome-output"];
+          ['compact-output', 'sort-keys', 'raw-input', 'raw-output', 'slurp'].forEach(option => {
+            let part = document.getElementById(option).checked;
+            if (part) {
+              params.set(option, true);
+              options.push('--' + option);
+            } else {
+              params.delete(option);
+            }
+          });
+  
+          // Update url query params with current query
+          params.set('query', query);
+          const url = new URL(document.location);
+          url.search = params.toString();
+          window.history.replaceState({}, 'Jq Offline', url);
+  
+          // Create mock JSON file
+          await CLI.fs.writeFile("test.json", data);
+  
+          options.push(query);
+          options.push("test.json");
+  
+          let output = await CLI.exec("jq", options);
+          document.getElementById("output-json").value = output;
+        }
+  
+        // buffer and call the callback only after no activity for "interval": aka debounce
+        // This reduces load on the browser by avoiding jq evaluation while the user is typing
+        function debounce(callback, interval) {
+          let debounceTimeoutId;
+  
+          return function(...args) {
+            clearTimeout(debounceTimeoutId);
+            debounceTimeoutId = setTimeout(() => callback.apply(this, args), interval);
+          };
+        }
+  
+        let delayedJq = debounce(jq,  400);
+  
+        setup();
+        let CLI = await new Aioli("jq/1.7");
+      
+        document.getElementById("filter").addEventListener('input', delayedJq);
+        document.getElementById("input-json").addEventListener('input', delayedJq);
+        document.getElementById("compact-output").addEventListener('input', jq);
+        document.getElementById("sort-keys").addEventListener('input', jq);
+        document.getElementById("raw-input").addEventListener('input', jq);
+        document.getElementById("raw-output").addEventListener('input', jq);
+        document.getElementById("slurp").addEventListener('input', jq);
+        document.getElementById("generate-button").addEventListener('input', delayedJq);
+        // Call jq the first time without any changes
+        jq();
+      </script>
+  </head>
+  
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="mt-4">JQ TT</h1>
+      <table id="jq-table" class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th>Tool</th>
+            <th>Thing</th>
+            <th>VS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" class="form-control" value="Detector 1" /></td>
+            <td><input type="text" class="form-control" value="Part" /></td>
+            <td><input type="checkbox" class="form-check-input" /></td>
+          </tr>
+          <tr>
+            <td><input type="text" class="form-control" value="Detector 1" /></td>
+            <td><input type="text" class="form-control" value="Part" /></td>
+            <td><input type="checkbox" class="form-check-input" /></td>
+          </tr>
+          <tr>
+            <td colspan="1">Pass</td>
+            <td></td>
+            <td><input type="checkbox" class="form-check-input" /></td>
+          </tr>
+        </tbody>
+      </table>
+      <button id="add-column-button" class="btn btn-primary">+ Add Column</button>
+      <button id="add-row-button" class="btn btn-primary">Add Row</button>
+      <button id="generate-button" class="btn btn-success">Generate Statements</button>
+      <textarea id="statement-text-area" class="form-control mt-4" rows="4" readonly></textarea>
+    </div>
   
     <script>
       // Add event listeners for buttons
@@ -100,7 +188,7 @@
       }
   
       // Function to generate statements
-      function generateStatements() {
+  function generateStatements() {
     var table = document.getElementById("jq-table");
     var rows = table.rows;
     var statements = [];
@@ -108,16 +196,15 @@
     // Iterate over rows (excluding the header row)
     for (var i = 1; i < rows.length - 1; i++) {
       var row = rows[i];
-      var toolValue = row.cells[0].children[0].value;
-      var thingValue = row.cells[1].children[0].value;
-      var classifierValue = row.cells[2].children[0].checked? row.cells[2].children[0].value : "";
+      var toolValue = row.cells[0].querySelector('input[type="text"]').value;
+      var thingValue = row.cells[1].querySelector('input[type="text"]').value;
       var checkboxStates = [];
   
       // Iterate over checkboxes in the row
-      for (var j = 3; j < row.cells.length; j++) {
-        var checkbox = row.cells[j].children[0];
+      for (var j = 2; j < row.cells.length; j++) {
+        var checkbox = row.cells[j].querySelector('input[type="checkbox"]');
         if (checkbox.checked) {
-          checkboxStates.push(`([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0),\n\n`);
+          checkboxStates.push(`([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0))] | any)`);
         }
       }
   
@@ -127,52 +214,111 @@
       }
     }
   
-  // Iterate over the last row (Pass row)
-  var passRow = rows[rows.length - 1];
-  var passStatements = [];
+    // Iterate over the last row (Pass row)
+    var passRow = rows[rows.length - 1];
+    var passStatements = [];
   
-  for (var j = 3; j < passRow.cells.length; j++) {
-    var checkbox = passRow.cells[j].children[0];
-    if (checkbox.checked) {
-      var columnStatements = [];
-      for (var i = 1; i < rows.length - 1; i++) {
-        var row = rows[i];
-        var toolValue = row.cells[0].children[0].value;
-        var thingValue = row.cells[1].children[0].value;
-        var classifierValue = row.cells[2].children[0].checked? row.cells[2].children[0].value : "";
-        var checkbox = row.cells[j].children[0];
-        if (checkbox.checked) {
-          columnStatements.push(`([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0) )] | any),\n`);
+    for (var j = 2; j < passRow.cells.length; j++) {
+      var checkbox = passRow.cells[j].querySelector('input[type="checkbox"]');
+      if (checkbox.checked) {
+        var columnStatements = [];
+        for (var k = 1; k < rows.length - 1; k++) {
+          var row = rows[k];
+          var toolValue = row.cells[0].querySelector('input[type="text"]').value;
+          var thingValue = row.cells[1].querySelector('input[type="text"]').value;
+          var checkbox = row.cells[j].querySelector('input[type="checkbox"]');
+          if (checkbox.checked) {
+            columnStatements.push(`(([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0))] | any))`);
+          }
         }
+        passStatements.push("(" + columnStatements.join(" or ") + ")");
       }
-      passStatements.push("(" + columnStatements.join(" and ") + ")");
     }
-  }
   
     // Construct the final output
     var output = "{\n";
-    output += `"visible": ${statements.join(" or ")},\n`;
+    output += `"visible": (${statements.join(" and ")}),\n`;
     output += `"pass": ${passStatements.join(" or ")}\n`;
     output += "}";
   
+   
+  
     var statementTextArea = document.getElementById("statement-text-area");
     statementTextArea.value = output;
+    var statementTextArea = document.getElementById("filter");
+    statementTextArea.value = output;
   }
+  
     </script>
-
-  <footer class="site-footer">
-    
-
-    <div class="row column">
-      <div class="footer-legal">
-        &copy;MD<br>
-        All Rights Reserved
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <div>
+    <div id="top">
+          
       </div>
-    </div>
-  </footer>
-
-  <script src="js/vendor.js"></script>
-
-  <script src="js/main.js"></script>
-</body>
-</html>
+      <div id="content">
+          <div id="query">
+              <label id="filter-label" for="filter">Query</label>
+              <input
+                id="filter"
+                type="text"
+                name="filter"
+                autocapitalize="off"
+                autocomplete="on"
+                spellcheck="false"
+                autocorrect="off"
+                autofocus
+              />
+              <ul id="options">
+                
+                <li>
+                  <input type="checkbox" id="compact-output" name="co">
+                  <label for="compact-output" title="By default, jq pretty-prints JSON output. Using this option will result in more compact output by instead putting each JSON object on a single line.">--compact-output</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="sort-keys" name="sk">
+                  <label for="sort-keys" title="Output the fields of each object with the keys in sorted order.">--sort-key</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="raw-input" name="ri">
+                  <label for="raw-input" title="Don't parse the input as JSON. Instead, each line of text is passed to the filter as a string. If combined with --slurp, then the entire input is passed to the filter as a single long string.">--raw-input</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="raw-output" name="ro">
+                  <label for="raw-output" title="With this option, if the filter's result is a string then it will be written directly to standard output rather than being formatted as a JSON string with quotes. This can be useful for making jq filters talk to non-JSON-based systems.">--raw-output</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="slurp" name="s">
+                  <label for="slurp" title="Instead of running the filter for each JSON object in the input, read the entire input stream into a large array and run the filter just once.">--slurp</label>
+                </li>
+              </ul>
+          </div>
+  
+          <div id="input">
+              <label id="input-label" for="input-json">Input</label>
+              <textarea
+                id="input-json"
+                name="input"
+                placeholder="Paste your input json here"
+                autocapitalize="off"
+                autocomplete="off"
+                spellcheck="false"
+                autocorrect="off"
+              ></textarea>
+          </div>
+  
+          <div id="output">
+              <label id="output-label" for="output-json">Result</label>
+              <textarea
+                id="output-json"
+                placeholder="Output will appear here"
+                readonly
+              ></textarea>
+          </div>
+      </div>
+  </div>
+  </body>
+  </html>
+  
+  
