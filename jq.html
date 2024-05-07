@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JQ TT</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1 class="mt-4">JQ TT</h1>
+    <table id="jq-table" class="table">
+      <!-- table content -->
+    </table>
+    <button id="add-column-button" class="btn btn-primary">+ Add Column</button>
+    <button id="add-row-button" class="btn btn-primary">Add Row</button>
+    <button id="generate-button" class="btn btn-success">Generate Statements</button>
+
+    <div id="top">
+    </div>
+    <div id="content">
+      <div id="query">
+        <label id="filter-label" for="filter">Query</label>
+        <input id="filter" type="text-area" name="filter" />
+        <ul id="options">
+          <!-- options list -->
+        </ul>
+      </div>
+      <div id="input">
+        <label id="input-label" for="input-json">Input</label>
+        <textarea id="input-json" name="input" placeholder="Paste your input json here"></textarea>
+      </div>
+      <div id="output">
+        <label id="output-label" for="output-json">Result</label>
+        <textarea id="output-json" placeholder="Output will appear here" readonly></textarea>
+      </div>
+    </div>
+
+  <script src="jq.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
