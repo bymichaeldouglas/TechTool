@@ -203,7 +203,7 @@
           passColumnStatement.push(`([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0))] | any)`);
         }
       }
-      passStatements.push("(" + passColumnStatement.join(" or ") + ")");
+      passStatements.push("(" + passColumnStatement.join(" and ") + ")");
     }
   }
 

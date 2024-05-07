@@ -107,16 +107,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td><input type="text" class="form-control" value="Detector 1" /></td>
-          <td><input type="text" class="form-control" value="Part" /></td>
-          <td><input type="checkbox" class="form-check-input" /></td>
-        </tr>
-        <tr>
-          <td><input type="text" class="form-control" value="Detector 1" /></td>
-          <td><input type="text" class="form-control" value="Part" /></td>
-          <td><input type="checkbox" class="form-check-input" /></td>
-        </tr>
+        
         <tr>
           <td colspan="1">Pass</td>
           <td></td>
@@ -162,68 +153,63 @@
       }
     }
 
-    // Function to generate statements
-function generateStatements() {
+    function generateStatements() {
   var table = document.getElementById("jq-table");
   var rows = table.rows;
+  var columns = table.rows[0].cells.length - 2; // exclude the first two columns (Tool and Thing)
   var statements = [];
+  var passStatements = [];
 
-  // Iterate over rows (excluding the header row)
-  for (var i = 1; i < rows.length - 1; i++) {
-    var row = rows[i];
-    var toolValue = row.cells[0].querySelector('input[type="text"]').value;
-    var thingValue = row.cells[1].querySelector('input[type="text"]').value;
-    var checkboxStates = [];
+  // Iterate over columns (excluding the first two columns)
+  for (var j = 2; j < columns + 2; j++) {
+    var columnStatements = [];
+    var passColumnStatement = [];
 
-    // Iterate over checkboxes in the row
-    for (var j = 2; j < row.cells.length; j++) {
+    // Iterate over rows (excluding the header row and the pass row)
+    for (var i = 1; i < rows.length - 1; i++) {
+      var row = rows[i];
+      var toolValue = row.cells[0].querySelector('input[type="text"]').value;
+      var thingValue = row.cells[1].querySelector('input[type="text"]').value;
       var checkbox = row.cells[j].querySelector('input[type="checkbox"]');
       if (checkbox.checked) {
-        checkboxStates.push(`([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0))] | any)`);
+        columnStatements.push(`([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0))] | any)`);
       }
     }
 
-    // Construct the statement for this row
-    if (checkboxStates.length > 0) {
-      statements.push("(" + checkboxStates.join(" and ") + ")");
+    // Construct the statement for this column
+    if (columnStatements.length > 0) {
+      statements.push("(" + columnStatements.join(" and ") + ")");
     }
-  }
 
-  // Iterate over the last row (Pass row)
-  var passRow = rows[rows.length - 1];
-  var passStatements = [];
-
-  for (var j = 2; j < passRow.cells.length; j++) {
+    // Iterate over the pass row
+    var passRow = rows[rows.length - 1];
     var checkbox = passRow.cells[j].querySelector('input[type="checkbox"]');
     if (checkbox.checked) {
-      var columnStatements = [];
-      for (var k = 1; k < rows.length - 1; k++) {
-        var row = rows[k];
+      for (var i = 1; i < rows.length - 1; i++) {
+        var row = rows[i];
         var toolValue = row.cells[0].querySelector('input[type="text"]').value;
         var thingValue = row.cells[1].querySelector('input[type="text"]').value;
         var checkbox = row.cells[j].querySelector('input[type="checkbox"]');
         if (checkbox.checked) {
-          columnStatements.push(`(([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0))] | any))`);
+          passColumnStatement.push(`([."${toolValue}".output[] | select(.class== "${thingValue}" and (.y >= 0))] | any)`);
         }
       }
-      passStatements.push("(" + columnStatements.join(" or ") + ")");
+      passStatements.push("(" + passColumnStatement.join(" and ") + ")");
     }
   }
 
   // Construct the final output
   var output = "{\n";
-  output += `"visible": (${statements.join(" and ")}),\n`;
-  output += `"pass": ${passStatements.join(" or ")}\n`;
+  output += `"visible": (${statements.join(" or ")}),\n`;
+  output += `"pass":( ${passStatements.join(" or ")})\n`;
   output += "}";
-
- 
-
 
   var statementTextArea = document.getElementById("filter");
   statementTextArea.value = output;
   //trigger the jq function to update the output
-    jq();
-    delayedJq();
+  jq();
+  delayedJq();
+
   async function jq() {
         let data = document.getElementById("input-json").value;
         let query = document.getElementById("filter").value;
