@@ -45,20 +45,15 @@
     <script src="https://biowasm.com/cdn/v3/aioli.js"></script>
     <script defer type="module">
       async function setup() {
-        // Populate the form from the url parameters
-        let params = (new URL(document.location)).searchParams;
+  let params = (new URL(document.location)).searchParams;
 
-        let query = params.get('query');
-        if (query) {
-          document.getElementById("filter").value = query;
-        }
-        ['compact-output', 'sort-keys', 'raw-input', 'raw-output', 'slurp'].forEach(option => {
-          let p = params.get(option);
-          if (p === 'true') {
-            document.getElementById(option).checked = true;
-          }
-        });
-      }
+  // Only set the form elements if the URL parameters are present
+  if (params.has('query')) {
+    document.getElementById("filter").value = params.get('query');
+  }
+
+  
+}
 
       async function jq() {
         let data = document.getElementById("input-json").value;
@@ -66,15 +61,7 @@
 
         let params = (new URL(document.location)).searchParams;
         let options = ["--monochrome-output"];
-        ['compact-output', 'sort-keys', 'raw-input', 'raw-output', 'slurp'].forEach(option => {
-          let part = document.getElementById(option).checked;
-          if (part) {
-            params.set(option, true);
-            options.push('--' + option);
-          } else {
-            params.delete(option);
-          }
-        });
+        
 
         // Update url query params with current query
         params.set('query', query);
@@ -111,11 +98,7 @@
       document.getElementById("filter").addEventListener('input', delayedJq);
       
       document.getElementById("input-json").addEventListener('input', delayedJq);
-      document.getElementById("compact-output").addEventListener('input', jq);
-      document.getElementById("sort-keys").addEventListener('input', jq);
-      document.getElementById("raw-input").addEventListener('input', jq);
-      document.getElementById("raw-output").addEventListener('input', jq);
-      document.getElementById("slurp").addEventListener('input', jq);
+      
       document.getElementById("generate-button").addEventListener('input', Jq);
       // Call jq the first time without any changes
       jq();
@@ -152,8 +135,8 @@
         </tr>
       </tbody>
     </table>
-    <button id="add-column-button" class="btn btn-primary">+ Add Column</button>
-    <button id="add-row-button" class="btn btn-primary">Add Row</button>
+    <button id="add-column-button" class="btn btn-primary">+ Add Visibility Statemetn</button>
+    <button id="add-row-button" class="btn btn-primary">Add Object</button>
     <button id="generate-button" class="btn btn-success">Generate Statements</button>
     
   
@@ -249,7 +232,33 @@ function generateStatements() {
 
   var statementTextArea = document.getElementById("filter");
   statementTextArea.value = output;
-  document.getElementById("filter").addEventListener('input', delayedJq);
+  //trigger the jq function to update the output
+    jq();
+    delayedJq();
+  async function jq() {
+        let data = document.getElementById("input-json").value;
+        let query = document.getElementById("filter").value;
+
+        let params = (new URL(document.location)).searchParams;
+        let options = ["--monochrome-output"];
+        
+
+        // Update url query params with current query
+        params.set('query', query);
+        const url = new URL(document.location);
+        url.search = params.toString();
+        window.history.replaceState({}, 'Jq Offline', url);
+
+        // Create mock JSON file
+        await CLI.fs.writeFile("test.json", data);
+
+        options.push(query);
+        options.push("test.json");
+
+        let output = await CLI.exec("jq", options);
+        document.getElementById("output-json").value = output;
+      }
+  document.getElementById("filter").addEventListener('input', jq);
 }
 
   </script>
@@ -263,41 +272,23 @@ function generateStatements() {
     <div id="content">
         <div id="query">
             <label id="filter-label" for="filter">Query</label>
-            <input
+            <textarea
               id="filter"
-              type="text-area"
+              type="text"
               name="filter"
               autocapitalize="off"
               autocomplete="on"
               spellcheck="false"
               autocorrect="off"
               autofocus
-              class="form-control mt-8"
+              class="form-control mt-8 resizable"
               rows="4"
-            />
-            <ul id="options">
-              
-              <li>
-                <input type="checkbox" id="compact-output" name="co">
-                <label for="compact-output" title="By default, jq pretty-prints JSON output. Using this option will result in more compact output by instead putting each JSON object on a single line.">--compact-output</label>
-              </li>
-              <li>
-                <input type="checkbox" id="sort-keys" name="sk">
-                <label for="sort-keys" title="Output the fields of each object with the keys in sorted order.">--sort-key</label>
-              </li>
-              <li>
-                <input type="checkbox" id="raw-input" name="ri">
-                <label for="raw-input" title="Don't parse the input as JSON. Instead, each line of text is passed to the filter as a string. If combined with --slurp, then the entire input is passed to the filter as a single long string.">--raw-input</label>
-              </li>
-              <li>
-                <input type="checkbox" id="raw-output" name="ro">
-                <label for="raw-output" title="With this option, if the filter's result is a string then it will be written directly to standard output rather than being formatted as a JSON string with quotes. This can be useful for making jq filters talk to non-JSON-based systems.">--raw-output</label>
-              </li>
-              <li>
-                <input type="checkbox" id="slurp" name="s">
-                <label for="slurp" title="Instead of running the filter for each JSON object in the input, read the entire input stream into a large array and run the filter just once.">--slurp</label>
-              </li>
-            </ul>
+            ></textarea>
+        </div>
+            <div style="visibility: hidden;">
+              <button id="generate-button" class="btn btn-success">Generate Statements</button>
+            
+        </div>
         </div>
 
         <div id="input">
@@ -310,6 +301,8 @@ function generateStatements() {
               autocomplete="off"
               spellcheck="false"
               autocorrect="off"
+              class="form-control mt-8 resizable"
+              rows="4"
             ></textarea>
         </div>
 
@@ -318,6 +311,8 @@ function generateStatements() {
             <textarea
               id="output-json"
               placeholder="Output will appear here"
+              class="form-control mt-8 resizable"
+              rows="4"
               readonly
             ></textarea>
         </div>
