@@ -241,56 +241,77 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <div>
-  <div id="top">
+    <div id="top">
         
     </div>
     <div id="content">
-        <div id="query">
-            <label id="filter-label" for="filter">Query</label>
-            <textarea
-              id="filter"
-              type="text"
-              name="filter"
-              autocapitalize="off"
-              autocomplete="on"
-              spellcheck="false"
-              autocorrect="off"
-              autofocus
-              class="form-control mt-8 resizable"
-              rows="4"
-            ></textarea>
+      <div class="container-fluid mt-3">
+
+        
+        <div class="row">
+          
+            <div id="query" class="col-sm-7 bg-primary text-white">
+              <label id="filter-label" for="filter">Query</label>
+              <textarea
+                id="filter"
+                type="text"
+                name="filter"
+                autocapitalize="off"
+                autocomplete="on"
+                spellcheck="false"
+                autocorrect="off"
+                autofocus
+                class="form-control mt-8 resizable"
+                rows="14"
+              ></textarea>
+          </div>
+
+          
+          
+
+            <div id="input" class="col-sm-3 bg-dark text-white">
+              <label id="input-label" for="input-json">Input</label>
+              <textarea
+                id="input-json"
+                name="input"
+                placeholder="Paste your input json here"
+                autocapitalize="off"
+                autocomplete="off"
+                spellcheck="false"
+                autocorrect="off"
+                class="form-control mt-8 resizable"
+                rows="14"
+              ></textarea>
+            </div>
+
+          
+          
+            <div id="output" class="col-sm-2 bg-primary text-white">
+              <label id="output-label" for="output-json">Result</label>
+              <textarea
+                id="output-json"
+                placeholder="Output will appear here"
+                class="form-control mt-8 resizable"
+                rows="14"
+                readonly
+              ></textarea>
+          </div>
+          
         </div>
+        <br>
+      
+        
+      </div>
+        
             <div style="visibility: hidden;">
               <button id="generate-button" class="btn btn-success">Generate Statements</button>
             
         </div>
         </div>
 
-        <div id="input">
-            <label id="input-label" for="input-json">Input</label>
-            <textarea
-              id="input-json"
-              name="input"
-              placeholder="Paste your input json here"
-              autocapitalize="off"
-              autocomplete="off"
-              spellcheck="false"
-              autocorrect="off"
-              class="form-control mt-8 resizable"
-              rows="4"
-            ></textarea>
-        </div>
+        
 
-        <div id="output">
-            <label id="output-label" for="output-json">Result</label>
-            <textarea
-              id="output-json"
-              placeholder="Output will appear here"
-              class="form-control mt-8 resizable"
-              rows="4"
-              readonly
-            ></textarea>
-        </div>
+        
     </div>
 </div>
 </body>
