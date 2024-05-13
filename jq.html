@@ -437,10 +437,10 @@ function constructFilterStatement(row) {
                 case 1: filterStatement += ` and (.y >= ${value})`; break;
                 case 2: filterStatement += ` and ((.x + .w) <= ${value})`; break;
                 case 3: filterStatement += ` and ((.y + .h) <= ${value})`; break;
-                case 4: filterStatement += ` and (.x <= ${value})`; break;
-                case 5: filterStatement += ` and (.x >= ${value})`; break;
-                case 6: filterStatement += ` and (.y <= ${value})`; break;
-                case 7: filterStatement += ` and (.y >= ${value})`; break;
+                case 4: filterStatement += ` and (.w <= ${value})`; break;
+                case 5: filterStatement += ` and (.w >= ${value})`; break;
+                case 6: filterStatement += ` and (.h <= ${value})`; break;
+                case 7: filterStatement += ` and (.h >= ${value})`; break;
             }
         }
         
@@ -466,10 +466,10 @@ function constructPassFilterStatement(row) {
                 case 1: filterStatement += ` and (.y >= ${value})`; break;
                 case 2: filterStatement += ` and ((.x + .w) <= ${value})`; break;
                 case 3: filterStatement += ` and ((.y + .h) <= ${value})`; break;
-                case 4: filterStatement += ` and (.x <= ${value})`; break;
-                case 5: filterStatement += ` and (.x >= ${value})`; break;
-                case 6: filterStatement += ` and (.y <= ${value})`; break;
-                case 7: filterStatement += ` and (.y >= ${value})`; break;
+                case 4: filterStatement += ` and (.w <= ${value})`; break;
+                case 5: filterStatement += ` and (.w >= ${value})`; break;
+                case 6: filterStatement += ` and (.h <= ${value})`; break;
+                case 7: filterStatement += ` and (.h >= ${value})`; break;
             }
         }
         
@@ -519,12 +519,11 @@ document.getElementById("filter").addEventListener('input', jq);
   </script>
 <script>
   window.addEventListener('DOMContentLoaded', (event) => {
-      fetch('jqmodal2.html')
+      fetch('jqmodal.html')
           .then(response => response.text())
           .then(html => {
               document.body.insertAdjacentHTML('beforeend', html);
-              // After the modal is added to the DOM, initialize all related scripts
-              bindCropper();
+              bindCropper(); //  initialize all related scripts
           })
           .catch(error => {
               console.error('Error loading the modal:', error);
