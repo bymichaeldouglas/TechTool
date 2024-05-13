@@ -265,10 +265,10 @@ if (params.has('query')) {
             { label: "Y", value: 0 },
             { label: "X+W", value: 0 },
             { label: "Y+H", value: 0 },
-            { label: "MIN-X", value: 0 },
-            { label: "MAX-X", value: 0 },
-            { label: "MIN-Y", value: 0 },
-            { label: "MAX-Y", value: 0 }
+            { label: "MIN-W", value: 0 },
+            { label: "MAX-W", value: 0 },
+            { label: "MIN-H", value: 0 },
+            { label: "MAX-H", value: 0 }
         ].map(attr => `<input type="number" class="form-control form-control-sm me-1 d-none" title="${attr.label}" value="${attr.value}" style="width: 50px;">`).join('')}
         <i class="fas fa-edit" data-bs-toggle="modal" data-bs-target="#editModal" onclick="populateModal(this)"></i>
     </div>`;
