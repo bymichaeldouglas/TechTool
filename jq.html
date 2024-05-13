@@ -518,17 +518,47 @@ document.getElementById("filter").addEventListener('input', jq);
 
   </script>
 <script>
-    window.addEventListener('DOMContentLoaded', (event) => {
-        fetch('jqmodal.html')
-            .then(response => response.text())
-            .then(html => {
-                document.body.insertAdjacentHTML('beforeend', html);
-                // Initialize or re-bind any event listeners or plugins related to the modal here, if necessary
-            })
-            .catch(error => {
-                console.error('Error loading the modal:', error);
-            });
-    });
+  window.addEventListener('DOMContentLoaded', (event) => {
+      fetch('jqmodal2.html')
+          .then(response => response.text())
+          .then(html => {
+              document.body.insertAdjacentHTML('beforeend', html);
+              // After the modal is added to the DOM, initialize all related scripts
+              bindCropper();
+          })
+          .catch(error => {
+              console.error('Error loading the modal:', error);
+          });
+  });
+  
+  function bindCropper() {
+      var imageInput = document.getElementById('imageInput');
+      if (imageInput) {
+          imageInput.addEventListener('change', function (event) {
+              var files = event.target.files;
+              if (files && files.length > 0) {
+                  var reader = new FileReader();
+                  reader.onload = function (e) {
+                      var image = document.getElementById('image');
+                      if (window.cropper) {
+                          window.cropper.destroy(); // Destroy any previous instance
+                      }
+                      image.src = e.target.result;
+                      window.cropper = new Cropper(image, {
+                        aspectRatio: 16 / 9,
+                          crop(event) {
+                              document.querySelector('[title="Attribute 1"]').value = Math.round(event.detail.x);
+                              document.querySelector('[title="Attribute 2"]').value = Math.round(event.detail.y);
+                              document.querySelector('[title="Attribute 3"]').value = Math.round(event.detail.x + event.detail.width);
+                              document.querySelector('[title="Attribute 4"]').value = Math.round(event.detail.y + event.detail.height);
+                          }
+                      });
+                  };
+                  reader.readAsDataURL(files[0]);
+              }
+          });
+      }
+  }
     </script>
 </body>
 </html>
