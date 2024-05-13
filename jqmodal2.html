@@ -1,67 +1,73 @@
-<link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editModalLabel">ROI Values</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form id="edit-form">
-              <div class="form-group">
-                <input type="number" class="form-control my-2" value="0" title="Attribute 1" data-index="0">
-                <input type="number" class="form-control my-2" value="0" title="Attribute 2" data-index="1">
-                <input type="number" class="form-control my-2" value="0" title="Attribute 3" data-index="2">
-                <input type="number" class="form-control my-2" value="0" title="Attribute 4" data-index="3">
-                <input type="number" class="form-control my-2" value="0" title="Attribute 5" data-index="4">
-                <input type="number" class="form-control my-2" value="0" title="Attribute 6" data-index="5">
-                <input type="number" class="form-control my-2" value="0" title="Attribute 7" data-index="6">
-                <input type="number" class="form-control my-2" value="0" title="Attribute 8" data-index="7">
-                <!-- Existing dynamically generated input fields -->
+  <div class="modal-dialog modal-xl"> <!-- Increased modal size -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">ROI Values</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-8"> <!-- Image container taking 2/3 of the space -->
+              <div class="img-container" style="margin-top: 20px; width: 100%; height: 300px;">
+                <img id="image" style="max-width: 100%; height: auto;">
               </div>
               <input type="file" id="imageInput" accept="image/*" class="form-control">
-              <div class="img-container" style="margin-top: 20px; width: 100%; height: 300px;">
-                <img id="image" style="max-width: 100%;">
-              </div>
-            </form>
+            </div>
+            <div class="col-md-4"> <!-- Dynamic input fields container taking 1/3 of the space -->
+              <form id="edit-form">
+                <div class="form-group">
+                  <!-- Existing dynamically generated input fields -->
+                </div>
+              </form>
+            </div>
           </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" onclick="saveChanges()">Save changes</button>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="saveChanges()">Save changes</button>
       </div>
     </div>
   </div>
-  <script>
-    document.getElementById('imageInput').addEventListener('change', function (event) {
-      var files = event.target.files;
-      var done = function (url) {
-        document.getElementById('image').src = url;
-        if (window.cropper) {
-          window.cropper.destroy(); // Destroy any previous instance
-        }
-        window.cropper = new Cropper(document.getElementById('image'), {
-          aspectRatio: 16 / 9,
-          crop(event) {
-            // Assuming attributes 1 through 4 correspond to x, y, x2, y2
-            let cropData = event.detail;
-            document.querySelector('[title="Attribute 1"]').value = Math.round(cropData.x);
-            document.querySelector('[title="Attribute 2"]').value = Math.round(cropData.y);
-            document.querySelector('[title="Attribute 3"]').value = Math.round(cropData.x + cropData.width);
-            document.querySelector('[title="Attribute 4"]').value = Math.round(cropData.y + cropData.height);
-          },
-        });
-      };
-    
-      if (files && files.length > 0) {
-        var reader = new FileReader();
-        reader.onload = function (event) {
-          done(event.target.result);
-        };
-        reader.readAsDataURL(files[0]);
+</div>
+
+<script>
+  document.getElementById('imageInput').addEventListener('change', function (event) {
+    var files = event.target.files;
+    var done = function (url) {
+      document.getElementById('image').src = url;
+      if (window.cropper) {
+        window.cropper.destroy(); // Destroy any previous instance
       }
-    });
-    </script>
+      window.cropper = new Cropper(document.getElementById('image'), {
+        viewMode: 3, // Ensure the image can't be smaller than the container
+        dragMode: 'none', // Disable dragging of the image
+        zoomable: false, // Disable zooming
+        scalable: false, // Disable scaling
+        cropBoxMovable: false, // Disable moving the crop box
+        cropBoxResizable: false, // Disable resizing the crop box
+        toggleDragModeOnDblclick: false, // Disable toggling drag mode on double click
+        aspectRatio: NaN,
+        crop(event) {
+          let cropData = event.detail;
+          document.querySelector('[title="Attribute 1"]').value = Math.round(cropData.x);
+          document.querySelector('[title="Attribute 2"]').value = Math.round(cropData.y);
+          document.querySelector('[title="Attribute 3"]').value = Math.round(cropData.x + cropData.width);
+          document.querySelector('[title="Attribute 4"]').value = Math.round(cropData.y + cropData.height);
+        },
+      });
+    };
     
+    if (files && files.length > 0) {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        done(event.target.result);
+      };
+      reader.readAsDataURL(files[0]);
+    }
+  });
+</script>

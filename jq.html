@@ -258,12 +258,20 @@ if (params.has('query')) {
     // Attributes input with icon for modal
     var cellAttributes = newRow.insertCell(2);
     cellAttributes.innerHTML = `
-        <div class="d-flex align-items-center">
-            <input type="checkbox" class="form-control form-control-sm me-1 form-check-input" title="CLASSIFIER" />
-            ${[1, 2, 3, 4, 5, 6,7,8].map(num => `<input type="number" class="form-control form-control-sm me-1 d-none" title="${num}" value="0" style="width: 50px;">`).join('')}
-            <i class="fas fa-edit" data-bs-toggle="modal" data-bs-target="#editModal" onclick="populateModal(this)"></i>
-            
-        </div>`;
+    <div class="d-flex align-items-center">
+        <input type="checkbox" class="form-control form-control-sm me-1 form-check-input" title="CLASSIFIER" />
+        ${[
+            { label: "X", value: 0 },
+            { label: "Y", value: 0 },
+            { label: "X+W", value: 0 },
+            { label: "Y+H", value: 0 },
+            { label: "MIN-X", value: 0 },
+            { label: "MAX-X", value: 0 },
+            { label: "MIN-Y", value: 0 },
+            { label: "MAX-Y", value: 0 }
+        ].map(attr => `<input type="number" class="form-control form-control-sm me-1 d-none" title="${attr.label}" value="${attr.value}" style="width: 50px;">`).join('')}
+        <i class="fas fa-edit" data-bs-toggle="modal" data-bs-target="#editModal" onclick="populateModal(this)"></i>
+    </div>`;
 
     // Append checkboxes for remaining columns
     for (var j = 3; j < table.rows[0].cells.length; j++) {
@@ -278,12 +286,44 @@ var currentEditingInput;
 function populateModal(icon) {
     currentEditingInput = icon.closest('.d-flex').querySelectorAll('input[type="number"]');
     var formGroup = document.getElementById('edit-form').querySelector('.form-group');
-    formGroup.innerHTML = ''; // Clear previous inputs
+    let htmlContent = ''; // Initialize an empty string to build HTML content
+    formGroup.innerHTML = ''; // Clear dynamic input fields
+    // Loop through inputs and create rows with two columns each
     currentEditingInput.forEach((input, index) => {
-        var inputField = `<input type="number" class="form-control my-2" value="${input.value}" title="Attribute ${index + 1}" data-index="${index}">`;
-        formGroup.innerHTML += inputField;
+        var title = input.getAttribute('title');
+        
+        // Add a row div for every two inputs or start of the loop
+        if (index % 2 === 0) {
+            if (index > 0) {
+                htmlContent += '</div>'; // Close the previous row if it's not the first element
+            }
+            htmlContent += '<div class="row">'; // Start a new row
+        }
+
+        // Add a column div for each input
+        htmlContent += `
+            <div class="col-md-6">
+                <div class="mb-2">
+                    <label class="form-label">${title}</label>
+                    <input type="number" class="form-control" value="${input.value}" title="Attribute ${index + 1}" data-index="${index}">
+                </div>
+            </div>`;
+
+        // If it's the last input and an odd index, close the row div
+        if (index === currentEditingInput.length - 1) {
+            htmlContent += '</div>'; // Ensure the last row is closed if it contains an odd number of inputs
+        }
     });
+
+    // Ensure all HTML is properly closed
+    if (currentEditingInput.length % 2 !== 0) {
+        htmlContent += '</div>'; // Close the row div if the total number of inputs is odd
+    }
+
+    formGroup.innerHTML = htmlContent; // Update the innerHTML with the complete HTML content
 }
+
+
 
 function saveChanges() {
     var modalInputs = document.querySelectorAll('#edit-form input[type="number"]');
@@ -519,7 +559,7 @@ document.getElementById("filter").addEventListener('input', jq);
   </script>
 <script>
   window.addEventListener('DOMContentLoaded', (event) => {
-      fetch('jqmodal.html')
+      fetch('jqmodal2.html')
           .then(response => response.text())
           .then(html => {
               document.body.insertAdjacentHTML('beforeend', html);
@@ -544,7 +584,12 @@ document.getElementById("filter").addEventListener('input', jq);
                       }
                       image.src = e.target.result;
                       window.cropper = new Cropper(image, {
-                        aspectRatio: 16 / 9,
+                        viewMode: 2, // Ensure the image can't be smaller than the container
+                        dragMode: 'none', // Disable dragging of the image
+                        zoomable: false, // Disable zooming
+                        scalable: false, // Disable scaling
+                        toggleDragModeOnDblclick: false, // Disable toggling drag mode on double click
+                        aspectRatio: NaN,
                           crop(event) {
                               document.querySelector('[title="Attribute 1"]').value = Math.round(event.detail.x);
                               document.querySelector('[title="Attribute 2"]').value = Math.round(event.detail.y);
