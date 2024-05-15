@@ -1,21 +1,6 @@
 let CLI;
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/jq_offline/service_worker.js', { scope: '/jq_offline' })
-    .then(function (registration) {
-      console.log('Service Worker Registered');
-    })
-    .catch(e => {
-      console.log('Unable to register service worker', e);
-    });
 
-  navigator.serviceWorker.ready.then(function (registration) {
-    console.log('Service Worker Ready');
-  })
-    .catch(e => {
-      console.log('Service worker unable to get ready', e);
-    });
-}
 
 async function setup() {
   let params = (new URL(document.location)).searchParams;
