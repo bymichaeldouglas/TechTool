@@ -197,50 +197,57 @@ function debounce(callback, interval) {
   }
   
   function generateStatementsog() {
-    var table = document.getElementById("jq-table");
-    var rows = table.rows;
-    var columns = table.rows[0].cells.length - 3;
+    try {
+      const table = document.getElementById("jq-table");
+      const rows = table.rows;
+      const columns = table.rows[0].cells.length - 3;
   
-    var visibleStatements = [];
-    var passStatements = [];
+      const visibleStatements = [];
+      const passStatements = [];
   
-    for (var j = 3; j < columns + 3; j++) {
-      for (var i = 1; i < rows.length - 1; i++) {
-        var row = rows[i];
-        var toolValue = row.cells[0].querySelector('input[type="text"]').value;
-        var thingValue = row.cells[1].querySelector('input[type="text"]').value;
-        var classifierChecked = row.cells[2].querySelector('input[type="checkbox"]').checked;
-        var conditions = buildConditions(row);
+      for (let j = 3; j < columns + 3; j++) {
+        for (let i = 1; i < rows.length - 1; i++) {
+          const row = rows[i];
+          const toolValue = row.cells[0].querySelector('input[type="text"]').value;
+          const thingValue = row.cells[1].querySelector('input[type="text"]').value;
+          const classifierChecked = row.cells[2].querySelector('input[type="checkbox"]').checked;
+          const conditions = buildConditions(row);
   
-        let filterStatement = constructFilterStatement(toolValue, thingValue, conditions);
-        var checkbox = row.cells[j].querySelector('input[type="checkbox"]');
+          const filterStatement = constructFilterStatement(toolValue, thingValue, conditions);
+          const checkbox = row.cells[j].querySelector('input[type="checkbox"]');
   
-        if (checkbox.checked) {
-          visibleStatements.push(filterStatement);
+          if (checkbox.checked) {
+            visibleStatements.push(filterStatement);
   
-          if (classifierChecked) {
-            let passConditionStatement = `(([."${toolValue}".output[] | select(.class== "${thingValue}")] | any)`;
-            passStatements.push(`(${passConditionStatement} and ${filterStatement})`);
+            if (classifierChecked) {
+              const passConditionStatement = `(([."${toolValue}".output[] | select(.class== "${thingValue}")]) | any)`;
+              passStatements.push(`(${passConditionStatement} and ${filterStatement})`);
+            }
           }
         }
       }
+  
+      const outputObj = {
+        visible: `(${visibleStatements.join(" or ")}) `,
+        pass: `(${passStatements.join(" or ")})`
+      };
+  
+      const formattedOutput = JSON.stringify(outputObj, null, 2);
+  
+      const statementTextArea = document.getElementById("filter");
+      statementTextArea.value = formattedOutput;
+  
+      jq();
+      delayedJq();
+    } catch (error) {
+      console.error("An error occurred while generating statements:", error);
     }
-  
-    var output = "{\n";
-    output += `"visible": (${visibleStatements.join(" or ")}),\n`;
-    output += `"pass": (${passStatements.join(" or ")})\n`;
-    output += "}";
-  
-    var statementTextArea = document.getElementById("filter");
-    statementTextArea.value = output;
-  
-    jq();
-    delayedJq();
   }
+  
   
   function buildConditions(row) {
     return [
-      { value: row.cells[2].querySelectorAll('input[type="number"]')[0].value, operator: "and", expression: "(.x >= {})" },
+      { value: row.cells[2].querySelectorAll('input[type="number"]')[0].value, operator: "and" , expression: "(.x >= {})" },
       { value: row.cells[2].querySelectorAll('input[type="number"]')[1].value, operator: "and", expression: "(.y >= {})" },
       { value: row.cells[2].querySelectorAll('input[type="number"]')[2].value, operator: "and", expression: "((.x + .w) <= {})" },
       { value: row.cells[2].querySelectorAll('input[type="number"]')[3].value, operator: "and", expression: "((.y + .h) <= {})" },
