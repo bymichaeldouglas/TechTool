@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Metadata and CSS links -->
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="jq.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+  <!-- JavaScript libraries -->
+  <script src="js/vendor/modernizr.js"></script>
+  <script src="js/vendor/jcropper.js"></script>
+  <script src="https://biowasm.com/cdn/v3/aioli.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<style>
+</style>
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="index.html">TECHTOOL</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+              
+              <li class="nav-item">
+                <a class="nav-link" href="#">JQ</a>
+              </li>
+              
+              
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+  <div class="container">
+    <table id="jq-table" class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th>Tool</th>
+            <th>Thing</th>
+            <th>Classifier</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td>Pass</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <button id="add-column-button" class="btn btn-dark">Add Visibility Statement</button>
+      <button id="add-row-button" class="btn btn-dark">Add Object</button>
+      <button id="generate-button" class="btn btn-success" style="visibility: hidden;;">Update Statements</button>
+      <div>
+        
+        <div id="top">
+            
+        </div>
+        <div id="content">
+          <div class="container-fluid mt-3">
+    
+            <div class="row">
+              
+              <div id="query" class="col-sm-7 bg-light" style="padding-bottom: 15px;">
+                <label id="filter-label" for="filter">Query</label>
+                <textarea
+                  id="filter"
+                  type="text"
+                  name="filter"
+                  autocapitalize="off"
+                  autocomplete="on"
+                  spellcheck="false"
+                  autocorrect="off"
+                  autofocus
+                  class="form-control mt-8 resizable"
+                  rows="14"
+                ></textarea>
+              </div>
+    
+              <div id="input" class="col-sm-3 bg-dark text-white" style="padding-bottom: 15px;">
+                <label id="input-label" for="input-json">Input</label>
+                <textarea
+                  id="input-json"
+                  name="input"
+                  placeholder="Paste your input json here"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  spellcheck="false"
+                  autocorrect="off"
+                  class="form-control mt-8 resizable"
+                  rows="14"
+                ></textarea>
+              </div>
+    
+              <div id="output" class="col-sm-2 bg-light" style="padding-bottom: 15px;">
+                <label id="output-label" for="output-json">Result</label>
+                <textarea
+                  id="output-json"
+                  placeholder="Output will appear here"
+                  class="form-control mt-8 resizable"
+                  rows="14"
+                  readonly
+                ></textarea>
+              </div>
+              
+            </div>
+            <br>
+          
+          </div>
+            
+        </div>
+    
+  </div>
+  <!-- Modal -->
+
+  </div>
+
+  <!-- External JS evaluation file -->
+  <script src="js/jq.js"></script>
+  <script src="js/truthTable.js"></script>
+</body>
+</html>
