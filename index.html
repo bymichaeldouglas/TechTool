@@ -20,25 +20,22 @@
 <style>
 </style>
 <body>
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="index.html?query=">TECHTOOL</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="collapsibleNavbar">
-            <ul class="navbar-nav">
-              
-              <li class="nav-item">
-                <a class="nav-link" href="jq.html">  </a>
-                <a class="nav-link" href="BBT.html">       </a>
-              </li>
-              
-              
-            </ul>
-          </div>
-        </div>
-      </nav>
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html?query=">TECHTOOL</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="jq.html">JQ Tool</a>
+            <a class="nav-link" id="bbt-link" href="BBT.html">JSON BB</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
   <div class="container">
     <table id="jq-table" class="table">
@@ -128,5 +125,11 @@
   <!-- External JS evaluation file -->
   <script src="js/jq.js"></script>
   <script src="js/truthTable.js"></script>
+  <script>
+    document.getElementById('bbt-link').addEventListener('click', function(event) {
+      event.preventDefault();
+      window.location.href = this.getAttribute('href');
+    });
+  </script>
 </body>
 </html>
