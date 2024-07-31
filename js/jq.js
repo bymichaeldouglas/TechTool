@@ -260,7 +260,7 @@ function debounce(callback, interval) {
       }
   
       if (columnStatements.length > 0) {
-        statements.push("(" + columnStatements.join(" and ") + ")");
+        statements.push("(" + columnStatements.join("\n and \n") + ")");
       }
     }
     return statements;
@@ -281,7 +281,7 @@ function debounce(callback, interval) {
         }
       }
       if (passColumnStatement.length > 0) {
-        passStatements.push("(" + passColumnStatement.join(" and ") + ")");
+        passStatements.push("(" + passColumnStatement.join("\n and \n") + ")");
       }
     }
     return passStatements;
@@ -289,8 +289,8 @@ function debounce(callback, interval) {
   
   function combineAndDisplayResults(visibleStatements, passStatements) {
     let output = "{\n";
-    output += `"visible": (${visibleStatements.join(" or ")}),\n`;
-    output += `"pass": (${passStatements.join(" or ")})\n`;
+    output += `"visible": (\n${visibleStatements.join("\n or \n")}\n),\n\n`;
+    output += `"pass": (\n${passStatements.join("\n or \n")}\n)\n`;
     output += "}";
   
     let statementTextArea = document.getElementById("filter");
@@ -358,6 +358,9 @@ function debounce(callback, interval) {
     }
     return filterStatement;
   }
+  function formatStatements(statements) {
+    return `(\n${statements.map(s => `(${s})`).join("\n or \n")}\n)`;
+  }
   
   function generateStatements() {
     var table = document.getElementById("jq-table");
@@ -366,6 +369,7 @@ function debounce(callback, interval) {
   
     let visibleStatements = generateVisibleStatements(rows, columns);
     let passStatements = generatePassStatements(rows, columns);
+    
     combineAndDisplayResults(visibleStatements, passStatements);
   }
   
