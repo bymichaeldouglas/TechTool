@@ -60,7 +60,7 @@ function debounce(callback, interval) {
     table.rows[0].cells[columnCount - 0].innerHTML = `VS`;
     for (var i = 1; i < table.rows.length; i++) {
       table.rows[i].insertCell(columnCount);
-      table.rows[i].cells[columnCount].innerHTML = `<input type="checkbox" />`;
+      table.rows[i].cells[columnCount].innerHTML = `<input type="checkbox"class="form-control form-control-sm me-1 form-check-input" />`;
     }
     attachTableListeners();
   }
@@ -95,7 +95,7 @@ function debounce(callback, interval) {
   
     for (var j = 3; j < table.rows[0].cells.length; j++) {
       var cellCheckbox = newRow.insertCell(j);
-      cellCheckbox.innerHTML = `<input type="checkbox" class="form-check-input" />`;
+      cellCheckbox.innerHTML = `<input type="checkbox" class="form-control form-control-sm me-1 form-check-input"/>`;
     }
     attachTableListeners();
   }
