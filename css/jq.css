@@ -35,3 +35,61 @@ ul {
 #jq-table .form-control-sm {
     width: 50px; /* Adjust the width as needed */
 }
+  /* styles.css */
+  .row-color-0 {
+    background-color: #5a3d3d;
+}
+
+.row-color-1 {
+    background-color: #65573867;
+}
+
+.row-color-2 {
+    background-color: #53532f;
+}
+
+.row-color-3 {
+    background-color: #455e42;
+}
+
+.row-color-4 {
+    background-color: #405d5c7e;
+}
+
+/* Add more colors as needed */
+.table>:not(caption)>*>* {
+    padding: .5rem .5rem;
+    color: var(--bs-table-color-state,var(--bs-table-color-type,var(--bs-table-color)));
+    background-color: inherit;
+    border-bottom-width: var(--bs-border-width);
+    box-shadow: inset 0 0 0 9999px var(--bs-table-bg-state,var(--bs-table-bg-type,var(--bs-table-accent-bg)));
+}
+.vs-color {
+  background-color: rgb(255, 224, 68);
+  text-align: center;
+}
+.check-box-center {
+  text-align: -webkit-center;
+}
+
+.magenta-border-top-sides {
+  border-top: 5px solid rgb(255, 224, 68);
+  border-left: 5px solid rgb(255, 224, 68);
+  border-right: 5px solid rgb(255, 224, 68);
+  border-radius: 15px 15px 0 0;
+  text-align: -webkit-center;
+}
+
+.magenta-border-bottom-sides {
+  border-bottom: 5px solid rgb(255, 224, 68);
+  border-left: 5px solid rgb(255, 224, 68);
+  border-right: 5px solid rgb(255, 224, 68);
+  border-radius: 0 0 15px 15px;
+  text-align: -webkit-center;
+}
+
+.magenta-border-sides {
+  border-left: 5px solid rgb(255, 224, 68);
+  border-right: 5px solid rgb(255, 224, 68);
+  text-align: -webkit-center;
+}
