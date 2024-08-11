@@ -46,10 +46,7 @@
             cursor: move;
         }
 
-        #object-list {
-            margin-top: 20px;
-            width: 80%;
-        }
+        
 
         #object-list select {
             width: 100%;
@@ -69,11 +66,14 @@
             padding: 8px;
             font-size: 14px;
         }
+        .inputpercentage {
+            width: 99%;
+        }
 
         #buttons {
             display: flex;
             justify-content: space-between;
-            width: 80%;
+            width: 100%;
         }
 
         button {
@@ -99,18 +99,17 @@
     min-width: 100vw;
 ">
         <div class="container-fluid">
-          <a class="navbar-brand" href="index.html?query=">TECHTOOL</a>
+          <a class="navbar-brand" href="index.html?query=">TECHTOOL > V1 Bounding Box Adjustment</a>
           <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-expanded="false">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="navbar-collapse collapse" id="collapsibleNavbar" style="">
+          <div class="navbar-collapse collapse" id="collapsibleNavbar">
             <ul class="navbar-nav">
               
             </ul>
           </div>
         </div>
       </nav>
-    <h1>Image Annotation Tool</h1>
 
     <input type="file" id="fileInput">
     <div id="image-container">
@@ -118,22 +117,33 @@
         <div id="overlay"></div>
     </div>
 
-    <div id="object-list">
-        <label for="objectSelect">Select Object:</label>
-        <select id="objectSelect"></select>
-    </div>
-
-    <div id="controls">
+    
+    
+    <div class="container" id="controls">
+        <div class="row">
+            <div id="object-list" class="col-4">
+                <label for="objectSelect">Select Object:</label>
+                <select id="objectSelect"></select>
+            </div>
+            <div class="col-2">
         <label for="xInput">X Position:</label>
-        <input type="number" id="xInput">
+        <input type="number" class="inputpercentage" id="xInput">
+        </div>
+        <div class="col-2">
         <label for="yInput">Y Position:</label>
-        <input type="number" id="yInput">
-        <label for="widthInput">Width:</label>
-        <input type="number" id="widthInput">
-        <label for="heightInput">Height:</label>
-        <input type="number" id="heightInput">
+        <input type="number" class="inputpercentage" id="yInput">
     </div>
-
+    <div class="col-2">
+        <label for="widthInput">Width:</label>
+        <input type="number" class="inputpercentage" id="widthInput">
+    </div>
+    <div class="col-2">
+        <label for="heightInput">Height:</label>
+        <input type="number" class="inputpercentage" id="heightInput">
+    </div>
+    
+    </div>
+    </row>
     <div id="modeSelect">
         <label>
             <input type="radio" name="updateMode" value="single" checked> Update Selected Object
@@ -141,12 +151,16 @@
         <label>
             <input type="radio" name="updateMode" value="all"> Update All Objects with the Same Label
         </label>
+        
     </div>
 
     <div id="buttons">
         <button id="prevButton">Previous Image</button>
+        <a id="exportButton" >
+            <i class="fas fa-download"> Download</i>
+          </a>
         <button id="nextButton">Next Image</button>
-        <button id="exportButton">Export JSON</button>
+        
     </div>
 
     <script src="js/augv1.js"></script>

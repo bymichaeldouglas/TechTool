@@ -28,17 +28,17 @@
       </button>
       <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="jq.html"></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="augvone.html"></a>
-          </li>
-          <li class="nav-item">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jsonModal">
+            <li class="nav-item">
+            <a class="nav-link btn btn-dark" href="jq.html"></a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link btn btn-dark" href="augvone.html">V1 BB Mover</a>
+            </li>
+            <li class="nav-item">
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#jsonModal">
               QuickFix
-          
             </button>
+            </li>
           </li>
         </ul>
       </div>
@@ -134,7 +134,7 @@
 
 
       function attachJsonTransformationHandler() {
-    document.getElementById('backToAnnotated').addEventListener('click', function () {
+    document.getElementById('backToPredicted').addEventListener('click', function () {
         const fileInput = document.getElementById('jsonUpload');
         const file = fileInput.files[0];
 

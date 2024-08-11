@@ -3,28 +3,35 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="jsonModalLabel">Upload JSON</h5>
+          <h5 class="modal-title" id="jsonModalLabel">Quick Functions</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <p>
-            This tool allows you to upload a V2-JSON file and move all entries from the "annotations" section back to the "predictions" section while maintaining the annotated label values. The "annotations" section will be cleared, and the updated JSON file will be automatically downloaded.
+            This tool allows you to upload a JSON file, manipulate all 
+            entries, and have the 
+            updated JSON file automatically downloaded.
           </p>
           <input type="file" id="jsonUpload" accept=".json" class="form-control mb-3">
           
-          <!-- Buttons in a grid -->
-          <div id="modalButtons" class="row">
-            <div class="col-6 mb-2">
-              <button id="backToAnnotated" class="btn btn-secondary w-100">Back to Annotated</button>
+          <!-- Descriptions and Buttons -->
+          <div id="modalButtons">
+            <div class="mb-3">
+              <p><strong>Back to Predicted:</strong></p><p> This tool allows you to move all 
+                entries from the "annotations" section back to the 
+                "predictions" section while rewriting the predicted label 
+                values with the annotated. Used to bulk add classification to a detector label job.</p>
+              <button id="backToPredicted" class="btn btn-secondary w-100">V2 Back to Predicted</button>
             </div>
-            <div class="col-6 mb-2">
-              <button class="btn btn-secondary w-100">Coming Soon</button>
+            <div class="mb-3">
+              <p><strong>Flatten</strong> This tool allows you to update all 
+                entries to be under Detector 1.</p>
+            <button class="btn btn-secondary w-100" disabled>Coming Soon</button>
             </div>
-            <div class="col-6 mb-2">
-              <button class="btn btn-secondary w-100">TBD 2</button>
-            </div>
-            <div class="col-6 mb-2">
-              <button class="btn btn-secondary w-100">TB D 3</button> <!-- Placeholder for a future button -->
+            <div class="mb-3">
+              <p><strong>Single Object Predictions:</strong> This tool allows you to remove all 
+                duplicate entries.</p>
+              <button class="btn btn-secondary w-100" disabled>Coming Soon</button>
             </div>
           </div>
         </div>
