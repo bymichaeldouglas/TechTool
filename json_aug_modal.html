@@ -1,0 +1,36 @@
+<!-- json_aug_modal.html -->
+<div class="modal fade" id="jsonModal" tabindex="-1" aria-labelledby="jsonModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="jsonModalLabel">Upload JSON</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            This tool allows you to upload a V2-JSON file and move all entries from the "annotations" section back to the "predictions" section while maintaining the annotated label values. The "annotations" section will be cleared, and the updated JSON file will be automatically downloaded.
+          </p>
+          <input type="file" id="jsonUpload" accept=".json" class="form-control mb-3">
+          
+          <!-- Buttons in a grid -->
+          <div id="modalButtons" class="row">
+            <div class="col-6 mb-2">
+              <button id="backToAnnotated" class="btn btn-secondary w-100">Back to Annotated</button>
+            </div>
+            <div class="col-6 mb-2">
+              <button class="btn btn-secondary w-100">Coming Soon</button>
+            </div>
+            <div class="col-6 mb-2">
+              <button class="btn btn-secondary w-100">TBD 2</button>
+            </div>
+            <div class="col-6 mb-2">
+              <button class="btn btn-secondary w-100">TB D 3</button> <!-- Placeholder for a future button -->
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
