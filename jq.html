@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON Analyzer</title>
+    <title>TECHTOOL</title>
     <link rel="icon" type="image/x-icon" href="/images/tool.ico">
   
     <link rel="stylesheet" type="text/css" href="css/jq.css">
@@ -12,94 +12,195 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
+    <!-- JavaScript libraries -->
     <script src="js/vendor/modernizr.js"></script>
     <script src="js/vendor/jcropper.js"></script>
     <script src="https://biowasm.com/cdn/v3/aioli.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            height: 100vh;
-            margin: 0;
-        }
-        #sidebar {
-            width: 300px;
-            overflow-y: auto;
-            padding: 20px;
-            background-color: #f0f0f0;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-        #main {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        #results {
-            margin-top: 20px;
-        }
-        #image-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        #image-container img {
-            max-width: 100%;
-            max-height: 80vh;
-            display: block;
-        }
-        .nav-button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 0 10px;
-            cursor: pointer;
-        }
-        .nav-button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        .rectangle-label {
-            position: absolute;
-            border: 2px solid rgba(255, 0, 0, 0.5);
-            background-color: rgba(255, 0, 0, 0.1);
-        }
-        .img-container {
-            position: relative;
-        }
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-    </style>
 </head>
 <body>
-    <div id="sidebar">
-        <h1>JSON Analyzer</h1>
-        <input type="file" id="fileInput">
-        <div id="results"></div>
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html?query=">TECHTOOL</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#jsonModal">
+              BTP
+            </button>
+            
+            </li>
+            <li class="nav-item">
+            <a class="nav-link btn btn-dark" href="jq.html"></a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link btn btn-dark" href="augvone.html"></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-dark" href="offsetaddv1.html"></a>
+              </li>
+            
+          </li>
+        </ul>
+      </div>
     </div>
-    <div id="main">
-        <div id="image-container">
-            <button id="prevButton" class="nav-button">&lt; Prev</button>
-            <div class="img-container">
-                <img id="imageDisplay" src="https://www.google.com/logos/doodles/2024/paris-games-football-6753651837110524-law.gif" alt="Image">
-                <canvas id="annotationCanvas"></canvas>
-                <canvas id="drawingCanvas"></canvas>
-                <div id="overlay"></div>
-            </div>
-            <button id="nextButton" class="nav-button">Next &gt;</button>
-        </div>
-    </div>
+  </nav>
 
-    <script src="js/bbtlabels.js"></script>
-    <script src="js/bbtscripts.js"></script>
+  <div class="container">
+    <table id="jq-table" class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th>Tool</th>
+          <th>Thing</th>
+          <th>Classifier</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pass</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <button id="add-row-button" class="btn btn-dark">Add Object</button>
+    <button id="add-column-button" class="btn btn-dark">Add Visibility Statement</button>
+    <button id="add-option-button" class="btn btn-dark">Add Option</button>
+  
+    <button id="generate-button" class="btn btn-success" style="visibility: hidden;">Update Statements</button>
+
+    <div id="top"></div>
+    <div id="content">
+      <div class="container-fluid mt-3">
+        <div class="row">
+          <div id="query" class="col-sm-12 bg-light" style="padding-bottom: 15px;">
+            <label id="filter-label" for="filter">Query</label>
+            <textarea
+              id="filter"
+              name="filter"
+              autocapitalize="off"
+              autocomplete="on"
+              spellcheck="false"
+              autocorrect="off"
+              autofocus
+              class="form-control mt-8 resizable"
+              rows="14"
+            ></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div id="input" class="col-sm-9 bg-dark text-white" style="padding-bottom: 15px;">
+            <label id="input-label" for="input-json">Input</label>
+            <textarea
+              id="input-json"
+              name="input"
+              placeholder="Paste your input json here"
+              autocapitalize="off"
+              autocomplete="off"
+              spellcheck="false"
+              autocorrect="off"
+              class="form-control mt-8 resizable"
+              rows="14"
+            ></textarea>
+          </div>
+
+          <div id="output" class="col-sm-3 bg-dark" style="padding-bottom: 15px;">
+            <label id="output-label" for="output-json">Result</label>
+            <textarea
+              id="output-json"
+              placeholder="Output will appear here"
+              class="form-control mt-8 resizable"
+              rows="14"
+              readonly
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Placeholder for the modal -->
+  <div id="modal-placeholder"></div>
+
+  <!-- Load modal content and attach event handlers -->
+  <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        fetch('json_aug_modal.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('modal-placeholder').innerHTML = data;
+                console.log('Modal content loaded successfully');
+                attachJsonTransformationHandler(); // Attach event handlers after loading modal
+            })
+            .catch(error => console.error('Error loading modal:', error));
+    });
+
+
+      function attachJsonTransformationHandler() {
+    document.getElementById('backToPredicted').addEventListener('click', function () {
+        const fileInput = document.getElementById('jsonUpload');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('Please upload a JSON file first.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                const jsonData = JSON.parse(e.target.result);
+
+                // Transform the JSON data
+                const transformedData = jsonData.map(item => {
+                    // Move annotations to predictions
+                    item.predictions = item.annotations.map(annotation => {
+                        return annotation;
+                    });
+                    
+                    // Clear the annotations array
+                    item.annotations = [];
+
+                    // Ensure there is a blank "annotated" entry
+                    item.annotated = [];
+
+                    return item;
+                });
+
+                // Download the transformed JSON
+                const blob = new Blob([JSON.stringify(transformedData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'transformed_data.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                // Close the modal
+                var myModalEl = document.getElementById('jsonModal');
+                var modal = bootstrap.Modal.getInstance(myModalEl);
+                modal.hide();
+
+            } catch (err) {
+                alert('Failed to process JSON file. Please check the file format.');
+            }
+        };
+
+        reader.readAsText(file);
+    });
+}
+
+  </script>
+
+  <!-- External JS files -->
+  <script src="js/jq2.js"></script>
+  <script src="js/truthTable.js"></script>
+  <script src="js/ttModal.js"></script>
+  <script src="js/quickAug.js"></script>
 </body>
 </html>
