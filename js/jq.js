@@ -18,6 +18,8 @@ async function setup() {
   document.getElementById("generate-button").addEventListener("click", generateStatements);
   attachTableListeners();
   jq();
+  addColumn();
+  addRow();
 }
 
 async function jq() {
@@ -149,64 +151,6 @@ function attachTableListeners() {
   });
 }
 
-var currentEditingInput;
-
-function populateModal(icon) {
-  currentEditingInput = icon.closest('.d-flex').querySelectorAll('input[type="number"]');
-  var formGroup = document.getElementById('edit-form').querySelector('.form-group');
-  let htmlContent = '';
-  formGroup.innerHTML = '';
-
-  currentEditingInput.forEach((input, index) => {
-    var title = input.getAttribute('title');
-
-    if (index % 2 === 0) {
-      if (index > 0) {
-        htmlContent += '</div>';
-      }
-      htmlContent += '<div class="row">';
-    }
-
-    htmlContent += `
-      <div class="col-md-6">
-        <div class="mb-2">
-          <label class="form-label">${title}</label>
-          <input type="number" class="form-control" value="${input.value}" title="Attribute ${index + 1}" data-index="${index}">
-        </div>
-      </div>`;
-
-    if (index === currentEditingInput.length - 1) {
-      htmlContent += '</div>';
-    }
-  });
-
-  if (currentEditingInput.length % 2 !== 0) {
-    htmlContent += '</div>';
-  }
-
-  formGroup.innerHTML = htmlContent;
-}
-
-function saveChanges() {
-  var modalInputs = document.querySelectorAll('#edit-form input[type="number"]');
-  modalInputs.forEach((modalInput, index) => {
-    currentEditingInput[index].value = modalInput.value;
-  });
-  $('#editModal').modal('hide');
-  generateStatements();
-}
-
-window.addEventListener('DOMContentLoaded', (event) => {
-  fetch('jqmodal2.html')
-    .then(response => response.text())
-    .then(html => {
-      document.body.insertAdjacentHTML('beforeend', html);
-      bindCropper();
-    })
-    .catch(error => {
-      console.error('Error loading the modal:', error);
-    });
-});
 
 function constructFilterStatement(toolValue, thingValue, conditions) {
   let filterStatement = `([."${toolValue}".output[] | select(.class== "${thingValue}"`;
