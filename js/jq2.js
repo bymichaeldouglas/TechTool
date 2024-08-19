@@ -1,55 +1,54 @@
-// setup.js
-
 let CLI;
 
 async function setup() {
-    let params = (new URL(document.location)).searchParams;
+  let params = (new URL(document.location)).searchParams;
 
-    if (params.has('query')) {
-        document.getElementById("filter").value = params.get('query');
-    }
+  if (params.has('query')) {
+    document.getElementById("filter").value = params.get('query');
+  }
 
-    CLI = await new Aioli("jq/1.7");
+  CLI = await new Aioli("jq/1.7");
 
-    // Attach event listeners
-    document.getElementById("filter").addEventListener('input', delayedJq);
-    document.getElementById("input-json").addEventListener('input', delayedJq);
-    document.getElementById("generate-button").addEventListener('click', jq);
-    document.getElementById("add-column-button").addEventListener("click", addColumn);
-    document.getElementById("add-row-button").addEventListener("click", addRow);
-    document.getElementById("add-option-button").addEventListener("click", addOptionRow);
-    document.getElementById("generate-button").addEventListener("click", generateStatements);
-    attachTableListeners();
-    jq();
-    addColumn();
-    addRow();
+  // Attach event listeners
+  document.getElementById("filter").addEventListener('input', delayedJq);
+  document.getElementById("input-json").addEventListener('input', delayedJq);
+  document.getElementById("generate-button").addEventListener('click', jq);
+  document.getElementById("add-column-button").addEventListener("click", addColumn);
+  document.getElementById("add-row-button").addEventListener("click", addRow);
+  document.getElementById("generate-button").addEventListener("click", generateStatements);
+  document.getElementById("add-option-button").addEventListener("click", addOptionRow);
+  
+  attachTableListeners();
+  jq();
+  addColumn();
+  addRow();
 }
 
 async function jq() {
-    let data = document.getElementById("input-json").value;
-    let query = document.getElementById("filter").value;
-    let params = (new URL(document.location)).searchParams;
-    let options = ["--monochrome-output"];
-    params.set('query', query);
-    const url = new URL(document.location);
-    url.search = params.toString();
-    window.history.replaceState({}, '', url);
+  let data = document.getElementById("input-json").value;
+  let query = document.getElementById("filter").value;
+  let params = (new URL(document.location)).searchParams;
+  let options = ["--monochrome-output"];
+  params.set('query', query);
+  const url = new URL(document.location);
+  url.search = params.toString();
+  window.history.replaceState({}, '', url);
 
-    await CLI.fs.writeFile("test.json", data);
-    options.push(query);
-    options.push("test.json");
+  await CLI.fs.writeFile("test.json", data);
+  options.push(query);
+  options.push("test.json");
 
-    let output = await CLI.exec("jq", options);
-    document.getElementById("output-json").value = output;
+  let output = await CLI.exec("jq", options);
+  document.getElementById("output-json").value = output;
 }
 
 function debounce(callback, interval) {
-    let debounceTimeoutId;
+  let debounceTimeoutId;
 
-    return function (...args) {
-        clearTimeout(debounceTimeoutId);
-        debounceTimeoutId = setTimeout(() => callback.apply(this, args), interval);
-    };
+  return function (...args) {
+    clearTimeout(debounceTimeoutId);
+    debounceTimeoutId = setTimeout(() => callback.apply(this, args), interval);
+  };
 }
 
 let delayedJq = debounce(jq, 400);
@@ -87,54 +86,6 @@ function addColumn() {
   lastRowCell.classList.add('check-box-center');
   attachTableListeners();
 }
-function addOptionRow() {
-  var table = document.getElementById("jq-table");
-  var rowCount = table.rows.length;
-
-  // Update the current bottom row to have only side borders
-  if (rowCount > 2) { // Ensure there's more than just the header and one data row
-      var currentBottomRow = table.rows[rowCount - 2]; // Second to last row
-      for (var k = 3; k < currentBottomRow.cells.length; k++) {
-          currentBottomRow.cells[k].classList.remove('magenta-border-bottom-sides');
-          currentBottomRow.cells[k].classList.add('magenta-border-sides');
-      }
-  }
-
-  var newRow = table.insertRow(rowCount - 1);
-
-  var cellTool = newRow.insertCell(0);
-  cellTool.innerHTML = `<input type="text" value="option" class="form-control"/>`;
-
-  var cellThing = newRow.insertCell(1);
-  cellThing.innerHTML = `<input type="text" value="code" class="form-control"/>`;
-
-  var cellAttributes = newRow.insertCell(2);
-  cellAttributes.innerHTML = `
-      <div class="d-flex align-items-center">
-          <!-- Hidden checkbox for the classifier -->
-          <input type="checkbox" class="form-control form-control-sm me-1 form-check-input d-none" title="CLASSIFIER" />
-          <!-- Visible text input element -->
-          <input type="text" class="form-control form-control-md" value="value" title="Attribute" />
-      </div>`;
-
-  // Add cells for the rest of the columns
-  for (var j = 3; j < table.rows[0].cells.length; j++) {
-      var cellCheckbox = newRow.insertCell(j);
-      cellCheckbox.innerHTML = `<input type="checkbox" class="form-control form-control-sm me-1 form-check-input"/>`;
-  }
-
-  // Assign a unique class for color
-  newRow.className = `row-color-${(rowCount - 1) % 5}`;
-
-  // Add magenta borders to the new bottom row for the appropriate columns
-  for (var k = 3; k < newRow.cells.length; k++) {
-      newRow.cells[k].classList.add('magenta-border-bottom-sides');
-  }
-
-  attachTableListeners();
-}
-
-
 
 
 function addRow() {
@@ -191,7 +142,52 @@ function addRow() {
 
   attachTableListeners();
 }
+function addOptionRow() {
+  var table = document.getElementById("jq-table");
+  var rowCount = table.rows.length;
 
+  // Update the current bottom row to have only side borders
+  if (rowCount > 2) { // Ensure there's more than just the header and one data row
+      var currentBottomRow = table.rows[rowCount - 2]; // Second to last row
+      for (var k = 3; k < currentBottomRow.cells.length; k++) {
+          currentBottomRow.cells[k].classList.remove('magenta-border-bottom-sides');
+          currentBottomRow.cells[k].classList.add('magenta-border-sides');
+      }
+  }
+
+  var newRow = table.insertRow(rowCount - 1);
+
+  var cellTool = newRow.insertCell(0);
+  cellTool.innerHTML = `<input type="text" value="option" class="form-control" disabled/>`;
+
+  var cellThing = newRow.insertCell(1);
+  cellThing.innerHTML = `<input type="text" value="code" class="form-control"/>`;
+
+  var cellAttributes = newRow.insertCell(2);
+  cellAttributes.innerHTML = `
+      <div class="d-flex align-items-center">
+          <!-- Hidden checkbox for the classifier -->
+          <input type="checkbox" class="form-control form-control-sm me-1 form-check-input d-none" title="CLASSIFIER" />
+          <!-- Visible text input element -->
+          <input type="text" class="form-control form-control-md" value="value" title="Attribute" />
+      </div>`;
+
+  // Add cells for the rest of the columns
+  for (var j = 3; j < table.rows[0].cells.length; j++) {
+      var cellCheckbox = newRow.insertCell(j);
+      cellCheckbox.innerHTML = `<input type="checkbox" class="form-control form-control-sm me-1 form-check-input"/>`;
+  }
+
+  // Assign a unique class for color
+  newRow.className = `row-color-${(rowCount - 1) % 5}`;
+
+  // Add magenta borders to the new bottom row for the appropriate columns
+  for (var k = 3; k < newRow.cells.length; k++) {
+      newRow.cells[k].classList.add('magenta-border-bottom-sides');
+  }
+
+  attachTableListeners();
+}
 
 function attachTableListeners() {
   const table = document.getElementById("jq-table");
@@ -276,95 +272,50 @@ function buildConditions(row) {
     { value: row.cells[2].querySelectorAll('input[type="number"]')[7].value, operator: "and", expression: "(.h <= {})" }
   ];
 }
-function handleOptionRow(row) {
-  let toolValue = row.cells[0].querySelector('input[type="text"]').value;
-  let thingValue = row.cells[1].querySelector('input[type="text"]').value;
-  let classifierChecked = row.cells[2].querySelector('input[type="checkbox"]').checked;
-
-  let filterStatement = `([."${toolValue}".output[] | select(.class== "${thingValue}"`;
-  row.cells[2].querySelectorAll('input[type="number"]').forEach((input, index) => {
-    let value = input.value;
-    if (value !== "" && value !== "0") {
-      switch (index) {
-        case 0: filterStatement += ` and (.x >= ${value})`; break;
-        case 1: filterStatement += ` and (.y >= ${value})`; break;
-        case 2: filterStatement += ` and ((.x + .w) <= ${value})`; break;
-        case 3: filterStatement += ` and ((.y + .h) <= ${value})`; break;
-        case 4: filterStatement += ` and (.w <= ${value})`; break;
-        case 5: filterStatement += ` and (.w >= ${value})`; break;
-        case 6: filterStatement += ` and (.h <= ${value})`; break;
-        case 7: filterStatement += ` and (.h >= ${value})`; break;
-      }
-    }
-  });
-
-  if (classifierChecked) {
-    filterStatement += ')] | any) and ([."Classifier 1".output[] | select(.classification == "passed")]| any)';
-  } else {
-    filterStatement += ")] | any)";
-  }
-  return filterStatement;
-}
 
 function generateVisibleStatements(rows, columns) {
   let statements = [];
   for (let j = 3; j < columns + 3; j++) {
-      let columnStatements = [];
-      for (let i = 1; i < rows.length - 1; i++) {
-          let row = rows[i];
-          let toolValue = row.cells[0].querySelector('input[type="text"]').value;
+    let columnStatements = [];
+    for (let i = 1; i < rows.length - 1; i++) {
+      let row = rows[i];
+      let toolValue = row.cells[0].querySelector('input[type="text"]').value;
+      let thingValue = row.cells[1].querySelector('input[type="text"]').value;
+      let classifierChecked = row.cells[2].querySelector('input[type="checkbox"]').checked;
 
-          // Check if the first column is "option"
-          if (toolValue.toLowerCase() === "option") {
-              let statement = handleOptionRow(row);
-              columnStatements.push(statement);
-              
-          } else {
-              // Check if the hidden classifier checkbox is checked
-              let classifierChecked = row.cells[2].querySelector('input[type="checkbox"]').checked;
-
-              if (row.cells[j].querySelector('input[type="checkbox"]').checked) {
-                let statement = constructFilterStatement(row);
-                columnStatements.push(statement);
-              }
-            }
-        
-            if (columnStatements.length > 0) {
-              statements.push("(" + columnStatements.join("\n and \n") + ")");
-            }
-          }
-          return statements;
-        }
+      if (row.cells[j].querySelector('input[type="checkbox"]').checked) {
+        let statement = constructFilterStatement(row);
+        columnStatements.push(statement);
       }
+    }
 
+    if (columnStatements.length > 0) {
+      statements.push("(" + columnStatements.join("\n and \n") + ")");
+    }
+  }
+  return statements;
+}
 
 function generatePassStatements(rows, columns) {
   let passStatements = [];
   let passRow = rows[rows.length - 1];
   for (let j = 3; j < columns + 3; j++) {
-      let passColumnStatement = [];
-      if (passRow.cells[j].querySelector('input[type="checkbox"]').checked) {
-          for (let i = 1; i < rows.length - 1; i++) {
-              let row = rows[i];
-              let toolValue = row.cells[0].querySelector('input[type="text"]').value;
-
-              // Check if the first column is "option"
-              if (toolValue.toLowerCase() === "option") {
-                  let statement = handleOptionRow(row);
-                  passColumnStatement.push(statement);
-              } else {
-                  let statement = constructPassFilterStatement(row);
-                  passColumnStatement.push(statement);
-              }
-          }
+    let passColumnStatement = [];
+    if (passRow.cells[j].querySelector('input[type="checkbox"]').checked) {
+      for (let i = 1; i < rows.length - 1; i++) {
+        let row = rows[i];
+        if (row.cells[j].querySelector('input[type="checkbox"]').checked) {
+          let statement = constructPassFilterStatement(row);
+          passColumnStatement.push(statement);
+        }
       }
-      if (passColumnStatement.length > 0) {
-          passStatements.push("(" + passColumnStatement.join("\n and \n") + ")");
-      }
+    }
+    if (passColumnStatement.length > 0) {
+      passStatements.push("(" + passColumnStatement.join("\n and \n") + ")");
+    }
   }
   return passStatements;
 }
-
 
 function combineAndDisplayResults(visibleStatements, passStatements) {
   let output = "{\n";
@@ -380,10 +331,16 @@ function combineAndDisplayResults(visibleStatements, passStatements) {
 
 function constructFilterStatement(row) {
   let toolValue = row.cells[0].querySelector('input[type="text"]').value;
+  
   let thingValue = row.cells[1].querySelector('input[type="text"]').value;
+  if (toolValue === 'option')  { 
+    let attributeValue = row.cells[2].querySelector('input[type="text"]').value;
+    let filterStatement = `([."${toolValue}"."${thingValue}"=="${attributeValue}"])`;
+    return filterStatement;}
   let classifierChecked = row.cells[2].querySelector('input[type="checkbox"]').checked;
 
   let filterStatement = `([."${toolValue}".output[] | select(.class== "${thingValue}"`;
+  
   row.cells[2].querySelectorAll('input[type="number"]').forEach((input, index) => {
     let value = input.value;
     if (value !== "" && value !== "0") {
@@ -398,6 +355,7 @@ function constructFilterStatement(row) {
         case 7: filterStatement += ` and (.h >= ${value})`; break;
       }
     }
+    
   });
 
   if (classifierChecked) {
@@ -405,15 +363,23 @@ function constructFilterStatement(row) {
   } else {
     filterStatement += ")] | any)";
   }
+  
   return filterStatement;
 }
 
 function constructPassFilterStatement(row) {
   let toolValue = row.cells[0].querySelector('input[type="text"]').value;
   let thingValue = row.cells[1].querySelector('input[type="text"]').value;
+  if (toolValue === 'option')  { 
+    let attributeValue = row.cells[2].querySelector('input[type="text"]').value;
+    let filterStatement = `([."${toolValue}"."${thingValue}"=="${attributeValue}"])`;
+    return filterStatement;}
   let classifierChecked = row.cells[2].querySelector('input[type="checkbox"]').checked;
 
   let filterStatement = `([."${toolValue}".output[] | select(.class== "${thingValue}"`;
+  if (toolValue === 'option')  { 
+    let filterStatement = `([."${toolValue}"."${thingValue}"`;
+    return filterStatement;}
   row.cells[2].querySelectorAll('input[type="number"]').forEach((input, index) => {
     let value = input.value;
     if (value !== "" && value !== "0") {
