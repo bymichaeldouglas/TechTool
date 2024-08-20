@@ -74,22 +74,22 @@ ul {
 
 .magenta-border-top-sides {
   border-top: 5px solid rgb(255, 224, 68);
-  border-left: 5px solid rgb(255, 224, 68);
+  border-left: 2px solid rgb(255, 224, 68);
   border-right: 5px solid rgb(255, 224, 68);
-  border-radius: 15px 15px 0 0;
+  border-radius: inherit;
   text-align: -webkit-center;
 }
 
 .magenta-border-bottom-sides {
   border-bottom: 5px solid rgb(255, 224, 68);
-  border-left: 5px solid rgb(255, 224, 68);
+  border-left: 2px solid rgb(255, 224, 68);
   border-right: 5px solid rgb(255, 224, 68);
   border-radius: 0 0 15px 15px;
   text-align: -webkit-center;
 }
 
 .magenta-border-sides {
-  border-left: 5px solid rgb(255, 224, 68);
+  border-left: 2px solid rgb(255, 224, 68);
   border-right: 5px solid rgb(255, 224, 68);
   text-align: -webkit-center;
 }
